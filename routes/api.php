@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 Route::get("/news", [NewsController::class, 'news']);
 Route::get("/coin-ranking", [CoinDetailsController::class, 'CoinDetails']);
 
-Route::get("/exchangesList", [CcxtController::class, 'getExchanges']);
-
+Route::get("/exchanges-list", [CcxtController::class, 'getExchanges']);
+Route::post("/wallet-backtest", [CcxtController::class, 'backTest']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

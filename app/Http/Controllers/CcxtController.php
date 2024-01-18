@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Services\CcxtServices as services;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-Class CcxtController extends Controller {
+
+class CcxtController extends Controller
+{
 
   public function getExchanges()
   {
@@ -16,14 +18,27 @@ Class CcxtController extends Controller {
     return response()->json($details, 200);
   }
 
+
+  public function backTest(Request $request)
+  {
+    try {
+      $service = new services($request->post("slug"));
+      $limit = $request->post("limit"); //Days
+      $quotePrice = $request->post("quotePrice");
+      $walletPrice = $request->post("walletPrice");
+      $coinsFilter = $request->post("allocation");
+      $fetchOhlv = $service->fetchOhlcv($limit, $coinsFilter, $quotePrice, $walletPrice);
+      return $fetchOhlv;
+    } catch (\Exception $e) {
+      return response()->json($e->getMessage(), 400);
+    }
+  }
+
   private function exchanges()
   {
     return [
       'binance',
       'huobi',
-      'bybit',
-      'kraken',
-      'coinbasepro',
       'mercado'
     ];
   }

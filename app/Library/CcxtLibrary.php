@@ -87,6 +87,33 @@ Class CcxtLibrary {
     }
   }
 
+  public function fetchOhlcv($symbol, $limit) {
+    try {
+        $pair = explode("/", $symbol);
+        $ohlcv = $this->ccxt->fetch_ohlcv($symbol, '1d', null, $limit);
+        foreach ($ohlcv as $candle) {
+          list($timestamp, $open_price, $high_price, $low_price, $close_price, $volume) = $candle;
+          $timestamp_em_milissegundos = $timestamp;
+          $timestamp_em_segundos = $timestamp_em_milissegundos / 1000;
+          $dataFormatada = date("d/m/Y", $timestamp_em_segundos);
+          $resultDay[$dataFormatada] = [
+              "currency" => $symbol,
+              "quote_currency" => $pair[1],
+              "price" => $close_price,
+              "changePrice" => $close_price - $open_price,
+              'percentage' => (($close_price - $open_price) * 100) / $close_price,
+              "date" => date("Y-m-d", $timestamp_em_segundos),
+              "volume" => $volume
+          ];
+      }
+      uasort($resultDay, function($a, $b) {
+          return strtotime($b["date"]) - strtotime($a["date"]);
+      });
+      return array_reverse($resultDay);
+    } catch (\Exception $e) {
+      return $e->getMessage();
+    }
+  }
   public function logo()
   {
     return $this->ccxt->urls['logo'];

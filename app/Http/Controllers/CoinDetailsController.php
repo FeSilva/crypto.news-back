@@ -20,7 +20,9 @@ class CoinDetailsController extends Controller
   public function CoinDetails()
   {
     try {
-      return response()->json($this->services->getCoinDetails(), 200);
+      $return = $this->services->getCoinDetails();
+      print("Response Body: ${$return}");
+      return response()->json(, 200);
     } catch (\Exception $e) {
       return response()->json($e->getMessage(), 400);
     }
